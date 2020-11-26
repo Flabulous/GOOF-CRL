@@ -1,5 +1,11 @@
 # depslib dependency file v1.0
-1606362155 source:c:\users\arandor\documents\github\goof-crl\main.c
+1606362877 source:c:\users\arandor\documents\github\goof-crl\main.c
+	<stdio.h>
+	<stdlib.h>
+	<math.h>
+	<time.h>
+
+1606362893 source:c:\users\arandor\documents\github\goof-crl\gui.c
 	<stdio.h>
 	<stdlib.h>
 	<math.h>

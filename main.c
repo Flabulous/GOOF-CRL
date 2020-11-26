@@ -87,7 +87,7 @@ int genr(char d) //Generate a room based off a difficulty number and store it in
     return 0;
 }
 
-int gend(char x_SIZE, char y_SIZE) //Generate a dungeon
+int gend(int x_SIZE, int y_SIZE) //Generate a dungeon
 {
     dgn = fopen("dgn.bin", "wb"); //Create dungeon file and open it for binary reading and writing
 
@@ -98,8 +98,8 @@ int gend(char x_SIZE, char y_SIZE) //Generate a dungeon
     fseek(dgn, SEEK_SET, 0); //Set file pointer to beginning, just in case something within the file itself is broken.
 
     //Generated a room, then properly store it into the created file
-    for (char x = 0; x <= x_SIZE; x++) {
-        for (char y = 0; y <= y_SIZE; y++) {
+    for (int x = 0; x <= x_SIZE; x++) {
+        for (int y = 0; y <= y_SIZE; y++) {
                 //fputc(x, dgn); (let's hope this isn't needed!)
                 //fputc(y, dgn);
             genr(roll(1,16));
@@ -132,10 +132,9 @@ int main()
     srand(time(0)); //Initalize random number gen
 
     printf("GOOF-CRL Loaded.\n");
-    printf("Enter wished size of Dungeon [MAX 255]: ");
+    printf("Speed test: \n");
+    gend(256, 256);
 
-    char input = getchar();
-    gend(12, 12);
 
     return 0;
 }
