@@ -26,14 +26,15 @@ int initGUI(int SCALE)
         if(gui_window == NULL ) {
            printf("\nWindow could not be created!\n");
         } else {
+
             printf("Loading Textures...\n");
             gui_screen = SDL_GetWindowSurface(gui_window);
-            //SDL_FillRect(gui_screen, NULL, SDL_MapRGB(gui_screen->format, 0x00, 0x25, 0x00));
+            SDL_FillRect(gui_screen, NULL, SDL_MapRGB(gui_screen->format, 0x00, 0x00, 0x00));
             SDL_UpdateWindowSurface(gui_window);
 
-            SDL_CreateRenderer(gui_window, -1, SDL_RENDERER_ACCELERATED);
-            SDL_SetRenderDrawColor(gui_renderer, 0, 255, 0, 255);
-            SDL_RenderSetScale(gui_renderer, SCALE, SCALE);
+            gui_renderer = SDL_CreateRenderer(gui_window, -1, SDL_RENDERER_ACCELERATED);
+            SDL_SetRenderDrawColor(gui_renderer, 0, 0, 0, 255);
+            //SDL_RenderSetScale(gui_renderer, 2, 2);
 
             bitmapSurface = SDL_LoadBMP("img/player.bmp");
             PLAYERTEX = SDL_CreateTextureFromSurface(gui_renderer, bitmapSurface);
@@ -56,14 +57,15 @@ int initGUI(int SCALE)
                 for (int j = 0; j <= 7; j++) {
                     board[i][j].x = i*SCALE;
                     board[i][j].y = j*SCALE;
-                    board[i][j].w = i+SCALE;
-                    board[i][j].h = j+SCALE;
+
+                    board[i][j].w = SCALE;
+                    board[i][j].h = SCALE;
+                    //printf("%d, %d ", i, j);
                     }
                 }
             }
         }
-    printf("GUI Initialized.\n");
-    return 0;
+        return 0;
 }
 
 int refreshGUI()
@@ -78,15 +80,50 @@ int refreshGUI()
             if (ldr[i][j].typ == MNR) {SDL_RenderCopy(gui_renderer, MONSTERTEX, NULL, &board[i][j]);}
             if (ldr[i][j].typ == CST) {SDL_RenderCopy(gui_renderer, CHESTTEX, NULL, &board[i][j]);}
             if (ldr[i][j].typ == WLL) {SDL_RenderCopy(gui_renderer, WALLTEX, NULL, &board[i][j]);}
-            SDL_UpdateTexture()
-            SDL_RenderDrawRect(gui_renderer, &board[i][j]);
+            //printf("%d, %d ", i, j);
+            //SDL_RenderDrawRect(gui_renderer, &board[i][j]);
         }
     }
 
+    //SDL_UpdateWindowSurface(gui_window);
     SDL_RenderPresent(gui_renderer);
-    SDL_UpdateWindowSurface(gui_window);
     //printf("GUI refreshed.\r");
     return 0;
 }
 
+int debugGUI() //This is literally a copied example so I can compare code
+{
+        SDL_Window* window;
+        SDL_Renderer* renderer;
+
+        /* Initialize SDL. */
+        if (SDL_Init(SDL_INIT_VIDEO) < 0)
+                return 1;
+
+        /* Create the window where we will draw. */
+        window = SDL_CreateWindow("SDL_RenderClear",
+                        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                        512, 512,
+                        0);
+
+        /* We must call SDL_CreateRenderer in order for draw calls to affect this window. */
+        renderer = SDL_CreateRenderer(window, -1, 0);
+
+        /* Select the color for drawing. It is set to red here. */
+        SDL_SetRenderDrawColor(renderer, 255, 0, 0, 255);
+
+        /* Clear the entire screen to our selected color. */
+        SDL_RenderClear(renderer);
+
+        /* Up until now everything was drawn behind the scenes.
+           This will show the new, red contents of the window. */
+        SDL_RenderPresent(renderer);
+
+        /* Give us time to see the window. */
+        SDL_Delay(5000);
+
+        /* Always be sure to clean up */
+        SDL_Quit();
+        return 0;
+}
 
