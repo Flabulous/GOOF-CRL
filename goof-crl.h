@@ -5,7 +5,7 @@
 #include <time.h>
 
 //Backend variables:
-#define dgn_name "dgn.bin" //Default name for Dungeon, is changeable
+#define dgn_name "dgn.bin" //File name for dungeon. Don't change this just yet, I don't know what it will do
 FILE *dgn; //File for storing built dungeon (Created if not found already)
 //Entity types
 #define PLR 0x01
