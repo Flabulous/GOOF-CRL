@@ -32,7 +32,7 @@ int initGUI(int SCALE)
             SDL_FillRect(gui_screen, NULL, SDL_MapRGB(gui_screen->format, 0x00, 0x00, 0x00));
             SDL_UpdateWindowSurface(gui_window);
 
-            gui_renderer = SDL_CreateRenderer(gui_window, -1, SDL_RENDERER_ACCELERATED);
+            gui_renderer = SDL_CreateRenderer(gui_window, -1, 0);
             SDL_SetRenderDrawColor(gui_renderer, 0, 0, 0, 255);
             //SDL_RenderSetScale(gui_renderer, 2, 2);
 
@@ -71,7 +71,6 @@ int initGUI(int SCALE)
 int refreshGUI()
 {
     //SDL_FillRect(gui_screen, NULL, SDL_MapRGB(gui_screen->format, 0x00, 0xFF, 0x00));
-    SDL_PollEvent(&e); //This is terrible.
     SDL_RenderClear(gui_renderer);
 
     for (int i = 0; i <= 7; i++) {
@@ -87,6 +86,36 @@ int refreshGUI()
 
     //SDL_UpdateWindowSurface(gui_window);
     SDL_RenderPresent(gui_renderer);
+
+    SDL_PollEvent(&e);
+
+    switch(e.type) {
+
+        case SDL_KEYDOWN:
+        switch(e.key.keysym.sym) {
+            case SDLK_LEFT:
+            //printf("Left\n");
+            return 1;
+
+            case SDLK_RIGHT:
+            //printf("Right\n");
+            return 2;
+
+            case SDLK_UP:
+            //printf("Up\n");
+            return 3;
+
+            case SDLK_DOWN:
+            //printf("Down\n");
+            return 4;
+
+            default:
+            break;
+        }
+
+
+
+    }
     //printf("GUI refreshed.\r");
     return 0;
 }
