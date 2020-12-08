@@ -334,7 +334,7 @@ int main(int argc, char* argv[])
     {
         input = refreshGUI(input);
 
-        if(c == 8) {
+        if(c == 64) {
             plra(input);
             c = 0;
         }
