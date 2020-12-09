@@ -263,7 +263,7 @@ int plra(int a) //All of a player's actions
                 //printf("Moved right\n");
             }
             //Move player into new room on the right if the player is at the edge
-            if (plr_rx+1 == 8) {
+            if (plr_rx+1 == 9) {
                 move(plr_rx, plr_ry, plr_dx+1, plr_dy, 1);
             }
         }
@@ -329,16 +329,13 @@ int main(int argc, char* argv[])
     char run = 0x01;
 
     input = 0;
-    char c = 0;
+
+    int msec = 0;
+    int trigger = 1;
     while(run == 0x01)
     {
         input = refreshGUI(input);
-
-        if(c == 64) {
-            plra(input);
-            c = 0;
-        }
-        c++;
+        plra(input);
     }
     return 0;
 }

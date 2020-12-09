@@ -6,6 +6,9 @@ SDL_Surface* gui_screen = NULL;
 SDL_Renderer* gui_renderer = NULL;
 SDL_Event e;
 
+//Keyboard stuff
+char keykeep = 0;
+
 SDL_Rect board[8][8];
 
 //Sprite bitmaps for dungeon GUI
@@ -32,7 +35,7 @@ int initGUI(int SCALE)
             SDL_FillRect(gui_screen, NULL, SDL_MapRGB(gui_screen->format, 0x00, 0x00, 0x00));
             SDL_UpdateWindowSurface(gui_window);
 
-            gui_renderer = SDL_CreateRenderer(gui_window, -1, 0);
+            gui_renderer = SDL_CreateRenderer(gui_window, -1, SDL_RENDERER_PRESENTVSYNC | SDL_RENDERER_ACCELERATED);
             SDL_SetRenderDrawColor(gui_renderer, 0, 0, 0, 255);
             //SDL_RenderSetScale(gui_renderer, 2, 2);
 
@@ -63,6 +66,8 @@ int initGUI(int SCALE)
                     //printf("%d, %d ", i, j);
                     }
                 }
+
+             //fpsTimer.start();
             }
         }
         return 0;
@@ -87,35 +92,43 @@ int refreshGUI()
     //SDL_UpdateWindowSurface(gui_window);
     SDL_RenderPresent(gui_renderer);
 
-    SDL_PollEvent(&e);
+    Uint8 *keyste = SDL_GetKeyboardState(NULL);
 
-    switch(e.type) {
+    if (keyste[SDL_SCANCODE_LEFT]) {
+        printf("Left.\n");
+        keyste[SDL_SCANCODE_LEFT] = 0;
+        if (keykeep == 0) {keykeep = 1; return 1;}
+        keykeep = 1;
+    }
 
-        case SDL_KEYDOWN:
-        switch(e.key.keysym.sym) {
-            case SDLK_LEFT:
-            //printf("Left\n");
-            return 1;
+    if (keyste[SDL_SCANCODE_RIGHT]) {
+        printf("Right.\n");
+        keyste[SDL_SCANCODE_RIGHT] = 0;
+        if (keykeep == 0) {keykeep = 1; return 2;}
+        keykeep = 1;
+    }
 
-            case SDLK_RIGHT:
-            //printf("Right\n");
-            return 2;
+    if (keyste[SDL_SCANCODE_UP]) {
+        printf("Up.\n");
+        keyste[SDL_SCANCODE_UP] = 0;
+        if (keykeep == 0) {keykeep = 1; return 3;}
+    }
 
-            case SDLK_UP:
-            //printf("Up\n");
-            return 3;
+    if (keyste[SDL_SCANCODE_DOWN]) {
+        printf("Down.\n");
+        keyste[SDL_SCANCODE_DOWN] = 0;
+        if (keykeep == 0) {keykeep = 1; return 4;}
+        keykeep = 1;
+    }
 
-            case SDLK_DOWN:
-            //printf("Down\n");
-            return 4;
-
-            default:
-            break;
+    SDL_PollEvent(&e); //This is terrible
+        switch(e.type)
+        {
+            case SDL_KEYDOWN:
+                keykeep = 0;
+                //printf("%d", keykeep);
         }
 
-
-
-    }
     //printf("GUI refreshed.\r");
     return 0;
 }
