@@ -95,27 +95,27 @@ int refreshGUI()
     Uint8 *keyste = SDL_GetKeyboardState(NULL);
 
     if (keyste[SDL_SCANCODE_LEFT]) {
-        printf("Left.\n");
+        //printf("Left.\n");
         keyste[SDL_SCANCODE_LEFT] = 0;
         if (keykeep == 0) {keykeep = 1; return 1;}
         keykeep = 1;
     }
 
     if (keyste[SDL_SCANCODE_RIGHT]) {
-        printf("Right.\n");
+        //printf("Right.\n");
         keyste[SDL_SCANCODE_RIGHT] = 0;
         if (keykeep == 0) {keykeep = 1; return 2;}
         keykeep = 1;
     }
 
     if (keyste[SDL_SCANCODE_UP]) {
-        printf("Up.\n");
+        //printf("Up.\n");
         keyste[SDL_SCANCODE_UP] = 0;
         if (keykeep == 0) {keykeep = 1; return 3;}
     }
 
     if (keyste[SDL_SCANCODE_DOWN]) {
-        printf("Down.\n");
+        //printf("Down.\n");
         keyste[SDL_SCANCODE_DOWN] = 0;
         if (keykeep == 0) {keykeep = 1; return 4;}
         keykeep = 1;

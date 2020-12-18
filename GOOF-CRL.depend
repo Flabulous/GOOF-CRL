@@ -1,8 +1,8 @@
 # depslib dependency file v1.0
-1607539508 source:c:\users\arandor\documents\github\goof-crl\main.c
+1608301703 source:c:\users\arandor\documents\github\goof-crl\main.c
 	"goof-crl.h"
 
-1607541075 source:c:\users\arandor\documents\github\goof-crl\gui.c
+1608248049 source:c:\users\arandor\documents\github\goof-crl\gui.c
 	<SDL.h>
 	"goof-crl.h"
 

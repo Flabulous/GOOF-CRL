@@ -102,18 +102,21 @@ int gend(int d_SIZE) //Generate a dungeon
     int max = d_SIZE * d_SIZE;
     int c = 0;
     //Generated a room, then properly store it into the created file
-    for (int x = 0; x <= d_SIZE; x++) {
+    for (int x = 0; x < d_SIZE; x++) {
         printf("Generated %d of %d rooms\r", c, max);
-        for (int y = 0; y <= d_SIZE; y++) {
-            genr(roll(1,4)+((x + 1) / (y + 1)), 3);
+        for (int y = 0; y < d_SIZE; y++) {
+            genr(roll(1,4)+((x + 1) / (y + 1)), roll(1, 4));
             fwrite(&ldr, 9, 64, dgn);
+            clrr(); //I would never have forgotten to clear the room before making a new one, how could I be so stupid
             c++;
         }
     }
     printf("\n");
 
-    ldd(0,0);
-
+    //This is terrible.
+    ldd(d_SIZE/2,d_SIZE/2);
+    plr_dx = d_SIZE/2;
+    plr_dy = d_SIZE/2;
     ldr[1][1].typ = PLR;
     ldr[1][1].hit = 10;
     ldr[1][1].atk = 1;
@@ -142,6 +145,7 @@ int clrr() //Clear the entirety of ldr
     return 0;
 }
 
+//This will soon be unused
 int sdd(int x, int y) //Save ldr into any given spot within the file.
 {
     dgn = fopen("dgn.bin", "rb");
@@ -149,12 +153,13 @@ int sdd(int x, int y) //Save ldr into any given spot within the file.
     fwrite(ldr, 9, 64, dgn);
 
     printf("\nSaved room %d, %d\n", x, y);
-    debug_prm(x,y);
+    //debug_prm(x,y);
 
     fclose(dgn);
     return 0;
 }
 
+//This will soon be unused
 int ldd(int x, int y) //Load any given room into ldr from file.
 {
     clrr();
@@ -166,7 +171,7 @@ int ldd(int x, int y) //Load any given room into ldr from file.
     ldr_y = y;
 
     printf("\nLoaded room %d, %d\n", x, y);
-    debug_prm(x,y);
+    //debug_prm(x,y);
 
     fclose(dgn);
     return 0;
@@ -192,23 +197,27 @@ int move(int ox, int oy, int dx, int dy, char arg) //Move any entity into a new 
     sdd(ldr_x, ldr_y); //Save original room after removing entity
     ldd(dx, dy); //Load new room
 
+    printf("%d, %d", ox, oy);
+
+    //Change the entity's placement within the room
     if(arg == 1) {
-        ldr[(8 % ox)][oy] = h;
+        if(ox == 0) {ldr[7][oy] = h;} else {ldr[0][oy] = h;}
     }
-
     if(arg == 2) {
-        ldr[ox][(8 % oy)] = h;
+        if(oy == 0) {ldr[ox][7] = h;} else {ldr[ox][0] = h;}
     }
 
+    //Sitting here reviewing this code and I wish I documented what it was supposed to do, remind me to document more processes.
+    //RE: This code is not to change the placement of the player entity, but to update the player's saved positions within the dungeon.
     if(h.typ == PLR) {
         plr_dx = dx;
         plr_dy = dy;
 
         if(arg == 1) {
-            plr_rx = 8 % ox;
+            if (ox == 0) {plr_rx = 7;} else {plr_rx = 0;}
         }
         if(arg == 2) {
-            plr_ry = 8 % oy;
+            if (oy == 0) {plr_ry = 7;} else {plr_ry = 0;}
         }
         return 0;
     }
@@ -244,55 +253,48 @@ int plra(int a) //All of a player's actions
 
     if (a != 0){
         if (a == 1) {
-            //Move player left if empty
-            if (ldr[plr_rx-1][plr_ry].typ == 0) {
-                pute(plr_rx, plr_ry, plr_rx-1, plr_ry);
-                //printf("Moved left\n");
-            }
             //Move player into new room on the left if the player is at the edge
             if (plr_rx-1 == -1) {
                 move(plr_rx, plr_ry, plr_dx-1, plr_dy, 1);
+            } else if (ldr[plr_rx-1][plr_ry].typ == 0 && plr_rx-1 > -1) { //Move player left if empty
+                pute(plr_rx, plr_ry, plr_rx-1, plr_ry);
+                //printf("Moved left\n");
             }
-
         }
 
         if (a == 2) {
-            //Move player right if empty
-            if (ldr[plr_rx+1][plr_ry].typ == 0) {
+            //Move player into new room on the right if the player is at the edge
+            if (plr_rx+1 == 8) {
+                move(plr_rx, plr_ry, plr_dx+1, plr_dy, 1);
+            } else if (ldr[plr_rx+1][plr_ry].typ == 0 && plr_rx+1 < 8) { //Move player right if empty
                 pute(plr_rx, plr_ry, plr_rx+1, plr_ry);
                 //printf("Moved right\n");
-            }
-            //Move player into new room on the right if the player is at the edge
-            if (plr_rx+1 == 9) {
-                move(plr_rx, plr_ry, plr_dx+1, plr_dy, 1);
             }
         }
 
         if (a == 3) {
-            //Move player up if empty
-            if (ldr[plr_rx][plr_ry-1].typ == 0) {
-                pute(plr_rx, plr_ry, plr_rx, plr_ry-1);
-                //printf("Moved up\n");
-            }
             //Move player into new room above if the player is at the edge
             if (plr_ry-1 == -1) {
                 move(plr_rx, plr_ry, plr_dx, plr_dy-1, 2);
+            } else if (ldr[plr_rx][plr_ry-1].typ == 0 && plr_ry-1 > -1) { //Move player up if empty
+                pute(plr_rx, plr_ry, plr_rx, plr_ry-1);
+                //printf("Moved up\n");
             }
+
         }
 
         if (a == 4) {
-            //Move player down if empty
-            if (ldr[plr_rx][plr_ry+1].typ == 0) {
-                pute(plr_rx, plr_ry, plr_rx, plr_ry+1);
-                //printf("Moved down\n");
-            }
             //Move player into new room below if the player is at the edge
             if (plr_ry+1 == 8) {
                 move(plr_rx, plr_ry, plr_dx, plr_dy+1, 2);
+            } else if (ldr[plr_rx][plr_ry+1].typ == 0 && plr_ry+1 < 8) { //Move player down if empty
+                pute(plr_rx, plr_ry, plr_rx, plr_ry+1);
+                //printf("Moved down\n");
             }
         }
     }
 
+    //printf("X: %d, Y: %d \n", plr_rx, plr_ry);
 
     return -1;
 }
