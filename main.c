@@ -190,14 +190,14 @@ int clre(int x, int y) //Clear any spot on ldr
     return 0;
 }
 
-int move(int ox, int oy, int dx, int dy, char arg) //Move any entity into a new room, ARGS: 1: flip X position, 2: flip Y position
+int move(int ox, int oy, int dx, int dy , char arg) //Move any entity into a new room, ARGS: 1: flip X position, 2: flip Y position
 {
     struct entity h = ldr[ox][oy];//Store entity
     clre(ox, oy); //Set original place to 0
     sdd(ldr_x, ldr_y); //Save original room after removing entity
     ldd(dx, dy); //Load new room
 
-    printf("%d, %d", ox, oy);
+    //printf("%d, %d", ox, oy);
 
     //Change the entity's placement within the room
     if(arg == 1) {
@@ -222,7 +222,7 @@ int move(int ox, int oy, int dx, int dy, char arg) //Move any entity into a new 
         return 0;
     }
 
-    ldd(ldr_x, ldr_y);
+    //ldd(ldr_x, ldr_y); - What was I thinking when I put this here
 
     return 0;
 }
