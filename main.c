@@ -1,6 +1,9 @@
 #include "goof-crl.h"
 
 //Game-Based variables:
+int d_SIZE = 0; //Maximum size of dungeon
+int r_SIZE = 7; //Maximum size of room - UNUSED
+
 int ldr_x = 0; //Currently loaded room's X location within dungeon
 int ldr_y = 0; //Currently loaded room's Y location within dungeon
 
@@ -16,38 +19,24 @@ int roll(int l, int u) //Generate a random number
     return r;
 }
 
-int genr(int d, char e) //Generate a room based off a difficulty number, and add an empty wall, and store it into ldr
+int genr(int d) //Generate a room based off a difficulty number
 {
 
-    //Add walls (made better thanks to a friend):
+    //Set up walls
        for (int i = 0; i <= 7; i++) {
-
-        //West Wall:
-        if (e != 1) {
-            ldr[i][0].typ = WLL;
-            ldr[i][0].sts = STC;
+            //West Wall:
+                ldr[i][0].typ = WLL;
+                ldr[i][0].sts = STC;
+            //North Wall:
+                ldr[0][i].typ = WLL;
+                ldr[0][i].sts = STC;
+            //South Wall:
+                ldr[i][7].typ = WLL;
+                ldr[i][7].sts = STC;
+            //East Wall:
+                ldr[7][i].typ = WLL;
+                ldr[7][i].sts = STC;
         }
-
-        //North Wall:
-        if (e != 2) {
-            ldr[0][i].typ = WLL;
-            ldr[0][i].sts = STC;
-        }
-
-        //South Wall:
-        if (e != 3) {
-            ldr[i][7].typ = WLL;
-            ldr[i][7].sts = STC;
-        }
-
-        //East Wall:
-        if (e != 4) {
-            ldr[7][i].typ = WLL;
-            ldr[7][i].sts = STC;
-        }
-
-        }
-
 
         int x = 0;
         int y = 0;
@@ -90,33 +79,32 @@ int genr(int d, char e) //Generate a room based off a difficulty number, and add
     return 0;
 }
 
-int gend(int d_SIZE) //Generate a dungeon
+int gend() //Generate a dungeon
 {
-    dgn = fopen("dgn.bin", "wb"); //Create dungeon file and open it for binary reading and writing
+    unsigned char *pdl[((d_SIZE * d_SIZE) * 576)];
 
-    if (dgn == NULL) {
-        printf("\nError generating file.\n");
-    }
-    fseek(dgn, SEEK_SET, 0); //Set file pointer to beginning, just in case something within the file itself is broken.
 
-    int max = d_SIZE * d_SIZE;
     int c = 0;
     //Generated a room, then properly store it into the created file
     for (int x = 0; x < d_SIZE; x++) {
-        printf("Generated %d of %d rooms\r", c, max);
+        printf("Generated %d of %d rooms\r", c, d_SIZE);
+
         for (int y = 0; y < d_SIZE; y++) {
-            genr(roll(1,4)+((x + 1) / (y + 1)), roll(1, 4));
-            fwrite(&ldr, 9, 64, dgn);
+
+            genr(roll(1,4)+((x + 1) / (y + 1)));
+
+            pdl
             clrr(); //I would never have forgotten to clear the room before making a new one, how could I be so stupid
             c++;
         }
     }
     printf("\n");
 
+
     //This is terrible.
-    ldd(d_SIZE/2,d_SIZE/2);
-    plr_dx = d_SIZE/2;
-    plr_dy = d_SIZE/2;
+    ldd(d_SIZE/4,d_SIZE/4);
+    plr_dx = d_SIZE/4;
+    plr_dy = d_SIZE/4;
     ldr[1][1].typ = PLR;
     ldr[1][1].hit = 10;
     ldr[1][1].atk = 1;
@@ -124,6 +112,14 @@ int gend(int d_SIZE) //Generate a dungeon
 
     printf("\n");
 
+    dgn = fopen("dgn.bin", "wb"); //Create dungeon file and open it for binary reading and writing
+
+    if (dgn == NULL) {
+        printf("\nError generating file.\n");
+    }
+
+    fseek(dgn, SEEK_SET, 0); //Set file pointer to beginning, just in case something within the file itself is broken.
+    fwrite(&pdl, 576, d_SIZE * 2, dgn); //
     fclose(dgn);
     return 0;
 }
@@ -149,7 +145,7 @@ int clrr() //Clear the entirety of ldr
 int sdd(int x, int y) //Save ldr into any given spot within the file.
 {
     dgn = fopen("dgn.bin", "rb");
-    fseek(dgn, ((x + y) * 576), SEEK_SET);
+    fseek(dgn, (y * d_SIZE + x) * 576, SEEK_SET);
     fwrite(ldr, 9, 64, dgn);
 
     printf("\nSaved room %d, %d\n", x, y);
@@ -164,7 +160,7 @@ int ldd(int x, int y) //Load any given room into ldr from file.
 {
     clrr();
     dgn = fopen("dgn.bin", "rb");
-    fseek(dgn, ((x + y) * 576), SEEK_SET);
+    fseek(dgn, (y * d_SIZE + x) * 576, SEEK_SET);
     fread(ldr, 9, 64, dgn);
 
     ldr_x = x;
@@ -318,10 +314,10 @@ int main(int argc, char* argv[])
     int input = 0;
 
     printf("GOOF-CRL Loaded.\n");
-    printf("Enter wished size of dungeon\n[WARNING: LARGER DUNGEON SIZES WILL RESULT IN LARGE FILE SIZES]\n");
+    printf("Enter wished scaled size of dungeon\n[WARNING: LARGER DUNGEON SIZES WILL RESULT IN LARGE FILE SIZES]\n [SIZE SHOULD BE NO GREATER THAN 16] \n");
     scanf("%d",&input);
-
-    gend(input);
+    d_SIZE = input * 4;
+    gend();
     printf("Dungeon generated.\n");
 
     //printf("Enter wished scale of screen:\n"); - I don't think I need this
