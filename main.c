@@ -19,7 +19,7 @@ int roll(int l, int u) //Generate a random number
     return r;
 }
 
-int genr(int d) //Generate a room based off a difficulty number
+int genr(int d, char e[3]) //Generate a room based off a difficulty number
 {
 
     //Set up walls
@@ -36,6 +36,32 @@ int genr(int d) //Generate a room based off a difficulty number
             //East Wall:
                 ldr[7][i].typ = WLL;
                 ldr[7][i].sts = STC;
+        }
+
+    //Set up doors
+        for (int i = 3; i <= 4; i++) {
+            //West Door:
+            if (e[0] == 1) {
+                ldr[i][0].typ = WLL;
+                ldr[i][0].sts = STC;
+            }
+            //North Door:
+            if (e[1] == 1 ) {
+                ldr[0][i].typ = WLL;
+                ldr[0][i].sts = STC;
+            }
+
+            //South Door:
+            if (e[2 == 1]) {
+                ldr[i][7].typ = WLL;
+                ldr[i][7].sts = STC;
+            }
+            //East Door:
+            if (e[3] == 1) {
+                ldr[7][i].typ = WLL;
+                ldr[7][i].sts = STC;
+            }
+
         }
 
         int x = 0;
@@ -81,19 +107,28 @@ int genr(int d) //Generate a room based off a difficulty number
 
 int gend() //Generate a dungeon
 {
-    unsigned char *pdl[((d_SIZE * d_SIZE) * 576)];
+    dgn = fopen("dgn.bin", "wb"); //Create dungeon file and open it for binary reading and writing
 
+    if (dgn == NULL) {
+        printf("\nError generating file.\n");
+    }
+    fseek(dgn, SEEK_SET, 0); //Set file pointer to beginning, just in case something within the file itself is broken.
+
+    //Need to generate a pathway by selecting a random direction and going a random amount of
+    //rooms forward before selecting a new direction that's not the original one
+    for (int i = 0; i <= d_SIZE) {
+
+    }
 
     int c = 0;
-    //Generated a room, then properly store it into the created file
     for (int x = 0; x < d_SIZE; x++) {
-        printf("Generated %d of %d rooms\r", c, d_SIZE);
-
+        printf("Generated %d of %d rooms\r", c, (d_SIZE * d_SIZE));
         for (int y = 0; y < d_SIZE; y++) {
 
             genr(roll(1,4)+((x + 1) / (y + 1)));
 
-            pdl
+            fwrite(&ldr, 9, 64, dgn);
+
             clrr(); //I would never have forgotten to clear the room before making a new one, how could I be so stupid
             c++;
         }
@@ -112,14 +147,7 @@ int gend() //Generate a dungeon
 
     printf("\n");
 
-    dgn = fopen("dgn.bin", "wb"); //Create dungeon file and open it for binary reading and writing
 
-    if (dgn == NULL) {
-        printf("\nError generating file.\n");
-    }
-
-    fseek(dgn, SEEK_SET, 0); //Set file pointer to beginning, just in case something within the file itself is broken.
-    fwrite(&pdl, 576, d_SIZE * 2, dgn); //
     fclose(dgn);
     return 0;
 }
