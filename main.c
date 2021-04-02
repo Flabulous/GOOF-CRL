@@ -19,9 +19,8 @@ int roll(int l, int u) //Generate a random number
     return r;
 }
 
-int genr(int d, char e[3]) //Generate a room based off a difficulty number
+int genr(int d, char e[]) //Generate a room based off a difficulty number
 {
-
     //Set up walls
        for (int i = 0; i <= 7; i++) {
             //West Wall:
@@ -42,24 +41,24 @@ int genr(int d, char e[3]) //Generate a room based off a difficulty number
         for (int i = 3; i <= 4; i++) {
             //West Door:
             if (e[0] == 1) {
-                ldr[i][0].typ = WLL;
-                ldr[i][0].sts = STC;
+                ldr[i][0].typ = 0;
+                ldr[i][0].sts = 0;
             }
             //North Door:
             if (e[1] == 1 ) {
-                ldr[0][i].typ = WLL;
-                ldr[0][i].sts = STC;
+                ldr[0][i].typ = 0;
+                ldr[0][i].sts = 0;
             }
 
             //South Door:
-            if (e[2 == 1]) {
-                ldr[i][7].typ = WLL;
-                ldr[i][7].sts = STC;
+            if (e[2] == 1) {
+                ldr[i][7].typ = 0;
+                ldr[i][7].sts = 0;
             }
             //East Door:
             if (e[3] == 1) {
-                ldr[7][i].typ = WLL;
-                ldr[7][i].sts = STC;
+                ldr[7][i].typ = 0;
+                ldr[7][i].sts = 0;
             }
 
         }
@@ -114,18 +113,43 @@ int gend() //Generate a dungeon
     }
     fseek(dgn, SEEK_SET, 0); //Set file pointer to beginning, just in case something within the file itself is broken.
 
-    //Need to generate a pathway by selecting a random direction and going a random amount of
-    //rooms forward before selecting a new direction that's not the original one
-    for (int i = 0; i <= d_SIZE) {
+    int vdr[d_SIZE][d_SIZE]; // Array of visited dungeon rooms
+    int c_x = 0; //Cursor X position
+    int c_y = 0; //Cursor Y position
+    int c_d = 0; //Cursor Direction
 
-    }
 
+
+
+
+
+
+
+
+
+
+
+
+/* Let go of the past. Kill it if you have to. YOU'RE STILL HOLDING ON
     int c = 0;
+    int s = 0;
+    int h = 0;
+    char a[3]; //Array to pass to genr for doors
+
+
     for (int x = 0; x < d_SIZE; x++) {
         printf("Generated %d of %d rooms\r", c, (d_SIZE * d_SIZE));
         for (int y = 0; y < d_SIZE; y++) {
 
-            genr(roll(1,4)+((x + 1) / (y + 1)));
+            for (int i = sizeof a / sizeof a[0]; i >= 0; i--) {a[i]=0;} //Clear the array
+
+            s = roll(0, sizeof a / sizeof a[0] - 1); //Select a random entry on the array
+            printf("%d\n", s);
+            if (s == h) {h = h + roll(-1,1);}
+            h = s;
+            a[s] = 1;
+
+            genr(roll(1,4)+((x + 1) / (y + 1)), a);
 
             fwrite(&ldr, 9, 64, dgn);
 
@@ -134,7 +158,7 @@ int gend() //Generate a dungeon
         }
     }
     printf("\n");
-
+*/
 
     //This is terrible.
     ldd(d_SIZE/4,d_SIZE/4);
